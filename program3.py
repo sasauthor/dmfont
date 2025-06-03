@@ -1,4 +1,6 @@
 import yaml
+import sys
+traget_chars= sys.argv[1:]
 
 cfg = {
     'style_imgs': [
@@ -37,8 +39,8 @@ cfg = {
     'output_dir': 'output',
     'checkpoint': 'checkpoints/korean-handwriting.pth',
     'num_font_samples': 1,
-    'target_chars': ['가','나','다','라','마','바','사','아','자','차','카','타','파','하','\n','안','녕','하','세','요','\n','감','사','합','니','다','\n','구','름','빵',' ','먹','고','싶','다','\n','오','늘',' ','저','녁','은',' ','고','추','잡','채','밥'],
-
+    'target_chars': target_chars,
+    
     'C': 32,
     'n_comps': 68,
     'n_comp_types': 3,
