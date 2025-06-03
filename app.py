@@ -3,47 +3,53 @@ import subprocess
 import os
 import uuid
 
-app = Flask(__name__, static_folder='static', template_folder='templates')
+def create_app():
+    app = Flask(__name__, static_folder='static', template_folder='templates')
 
-# 포트 3000에 Flask 실행
-@app.before_first_request
-def run_startup_scripts():
-    subprocess.run(["python", "program1.py"])
-    subprocess.run(["python", "program2.py"])
+    # 초기화 스크립트 실행
+    def run_startup_scripts():
+        subprocess.run(["python", "program1.py"], check=True)
+        subprocess.run(["python", "program2.py"], check=True)
 
-@app.route('/')
-def index():
-    return render_template('index.html', examples=[])
+    run_startup_scripts()
 
-@app.route('/generate', methods=['POST'])
-def generate():
-    text = request.form.get('text')
-    if not text:
-        return jsonify({"error": "텍스트가 없습니다."}), 400
+    @app.route('/')
+    def index():
+        return render_template('index.html', examples=[])
 
-    # 고유 ID 생성
-    run_id = str(uuid.uuid4())[:8]
+    @app.route('/generate', methods=['POST'])
+    def generate():
+        text = request.form.get('text')
+        if not text:
+            return jsonify({"error": "텍스트가 없습니다."}), 400
 
-    # program3.py 실행
-    subprocess.run(["python", "program3.py", text])
+        run_id = str(uuid.uuid4())[:8]
 
-    # inference.py 실행
-    subprocess.run([
-        "python", "inference.py",
-        "--config", "configs/infer_colab.yaml",
-        "--checkpoint", "checkpoints/korean-handwriting.pth",
-        "--save_dir", f"static/outputs/{run_id}"
-    ])
+        subprocess.run(["python", "program3.py", "--text", text], check=True)
+        subprocess.run([
+            "python", "inference.py",
+            "--config", "configs/infer_colab.yaml",
+            "--checkpoint", "checkpoints/korean-handwriting.pth",
+            "--save_dir", f"static/outputs/{run_id}"
+        ], check=True)
 
-    # 결과 이미지 경로 추출
-    image_files = os.listdir(f"static/outputs/{run_id}")
-    image_files = [f"/static/outputs/{run_id}/{f}" for f in image_files if f.endswith('.png')]
+        output_dir = f"static/outputs/{run_id}"
+        if not os.path.exists(output_dir):
+            return jsonify({"error": "이미지 생성 실패"}), 500
 
-    return jsonify({"images": image_files})
+        image_files = [
+            f"/{output_dir}/{f}" for f in os.listdir(output_dir)
+            if f.lower().endswith('.png')
+        ]
 
-@app.route('/download/<path:filename>')
-def download_file(filename):
-    return send_from_directory('static/outputs', filename, as_attachment=True)
+        return jsonify({"images": image_files})
+
+    @app.route('/download/<path:filename>')
+    def download_file(filename):
+        return send_from_directory('static/outputs', filename, as_attachment=True)
+
+    return app
 
 if __name__ == '__main__':
+    app = create_app()
     app.run(port=3000, debug=True)
