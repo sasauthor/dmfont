@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HAI! 손글씨 AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    function selectTemplate(id) {
+      console.log("선택된 템플릿:", id);
+      // 여기에 선택된 템플릿을 처리하는 로직 추가
+    }
+
+    async function handleSubmit(event) {
+  event.preventDefault();
+  const input = document.getElementById("text-input").value.trim();
+  if (!input) return;
+
+  const chat = document.getElementById("chat-history");
+  chat.innerHTML += `<div class="bg-white p-2 my-2 rounded shadow w-fit self-end">${input}</div>`;
+
+  // 서버에 문자열 전달
+  const res = await fetch('/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `text=${encodeURIComponent(input)}`
+  });
+
+  const data = await res.json();
+
+  if (data.images) {
+    const images = data.images.map(url => `
+      <div class="mt-2">
+        <img src="${url}" class="rounded shadow w-48" />
+        <a href="${url}" download class="text-blue-600 underline text-sm block mt-1">🔗 다운로드</a>
+      </div>`).join('');
+
+    chat.innerHTML += `<div class="bg-blue-100 p-2 my-2 rounded shadow w-fit">${images}</div>`;
+  } else {
+    chat.innerHTML += `<div class="bg-red-100 p-2 my-2 rounded shadow w-fit">⚠️ 오류가 발생했어요!</div>`;
+  }
+
+  document.getElementById("text-input").value = "";
+  chat.scrollTop = chat.scrollHeight;
+}
+
+  </script>
+</head>
+
+<body class="bg-gray-100">
+  <div class="max-w-3xl mx-auto py-6 px-4">
+    <h1 class="text-4xl font-bold mb-6 text-center">HAI! 손글씨 AI</h1>
+
+    <!-- 설명 말풍선 -->
+    <div class="bg-blue-100 text-blue-900 p-4 rounded-lg mb-4 shadow text-sm space-y-1">
+      <p>안녕하세요! 저는 손글씨 AI HAI에요!</p>
+      <p>1. '➕'를 눌러서 내 손글씨를 등록해 보세요! </p>
+      <p>2. 등록된 손글씨 중에 원하는 걸 선택해주세요!</p>
+      <p>3. 원하는 문구를 채팅으로 저에게 보내주세요!</p>
+      <p>그러면 HAI가 예쁜 손글씨로 쓰여진 문구를 보내드립니다!</p>
+    </div>
+
+    <!-- 채팅 UI 박스 -->
+    <div id="chat-history" class="flex flex-col bg-white h-[450px] overflow-y-scroll p-4 rounded shadow mb-4">
+      <!-- 사용자 및 AI 응답 메시지가 여기에 추가됨 -->
+    </div>
+
+    <!-- 입력 폼 -->
+    <form class="flex items-center space-x-2" onsubmit="handleSubmit(event)">
+      <!-- 파일 업로드 버튼 (아이콘형) -->
+      <label for="file-upload" class="cursor-pointer">
+        <span class="text-2xl">➕</span>
+      </label>
+      <input id="file-upload" type="file" class="hidden" name="file" />
+
+      <!-- 문구 입력창 -->
+      <input id="text-input" type="text" name="text" placeholder="문구 입력칸"
+        class="flex-grow border border-gray-300 rounded px-4 py-2" />
+
+      <!-- 제출 버튼 -->
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        <span class="text-xl">⬆️</span>
+      </button>
+    </form>
+
+    <!-- 저장된 글씨체 예시 -->
+    <h2 class="text-xl font-semibold mt-8 mb-4">저장된 글씨체 예시</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      {% for example in examples %}
+      <div onclick="selectTemplate('{{ example.id }}')" class="cursor-pointer hover:scale-105 transition">
+        <img src="{{ url_for('static', filename='thumbnails/' + example.image) }}" alt="예시 {{ loop.index }}"
+          class="rounded-lg shadow" />
+        <p class="text-center text-sm mt-1">예시 {{ loop.index }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+
+</html>
