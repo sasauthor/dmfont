@@ -1,3 +1,17 @@
+이 파일은 dmfont에 기반을 두고 만들어진 세종과학예술영재학교 인공지능 프로젝트 과목의 팀 산출물입니다.
+
+```
+pip install -r requirements.txt
+```
+위와 같이 필수 패키지를 다운로드 받고,
+
+```
+python app.py
+```
+로 실행해주세요.
+
+아래는 dmfont의 readme입니다.
+
 ## Few-shot Compositional Font Generation with Dual Memory (ECCV'20)
 
 **NOTICE: We release the unified few-shot font generation repository ([clovaai/fewshot-font-generation](https://github.com/clovaai/fewshot-font-generation)). If you are interested in using our implementation, please visit the unified repository.**
