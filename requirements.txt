@@ -11,3 +11,4 @@ fonttools
 tensorboardX
 sconf
 pdf2image
+h5py
