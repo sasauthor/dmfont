@@ -7,7 +7,34 @@ target_chars = sys.argv[1:]
 # YAML 설정 딕셔너리 구성
 cfg = {
     'style_imgs': [
-        f'style_cleaned/uniAC{str(i).zfill(2)}.png' for i in range(0, 28)
+        'style_cleaned/uniAC00.png',
+        'style_cleaned/uniAC01.png',
+        'style_cleaned/uniAC02.png',
+        'style_cleaned/uniAC03.png',
+        'style_cleaned/uniAC04.png',
+        'style_cleaned/uniAC05.png',
+        'style_cleaned/uniAC06.png',
+        'style_cleaned/uniAC07.png',
+        'style_cleaned/uniAC08.png',
+        'style_cleaned/uniAC09.png',
+        'style_cleaned/uniAC0A.png',
+        'style_cleaned/uniAC0B.png',
+        'style_cleaned/uniAC0C.png',
+        'style_cleaned/uniAC0D.png',
+        'style_cleaned/uniAC0E.png',
+        'style_cleaned/uniAC0F.png',
+        'style_cleaned/uniAC10.png',
+        'style_cleaned/uniAC11.png',
+        'style_cleaned/uniAC12.png',
+        'style_cleaned/uniAC13.png',
+        'style_cleaned/uniAC14.png',
+        'style_cleaned/uniAC15.png',
+        'style_cleaned/uniAC16.png',
+        'style_cleaned/uniAC17.png',
+        'style_cleaned/uniAC18.png',
+        'style_cleaned/uniAC19.png',
+        'style_cleaned/uniAC1A.png',
+        'style_cleaned/uniAC1B.png'
     ],
     'style_chars': [
         '각', '깪', '냓', '댼', '떥', '렎', '멷', '볠', '뽉', '솲', '쐛', '욄', '죭', '쭖',
