@@ -9,6 +9,13 @@ pip install -r requirements.txt
 python app.py
 ```
 로 실행해주세요.
+만약 실행하는 환경에 Poppler가 없다면 Poppler를 설치하셔야 합니다.
+ubuntu/debian 계열에선 아래 명령어를 실행해주세요.
+```
+sudo apt-get update
+sudo apt-get install -y poppler-utils
+
+```
 
 아래는 dmfont의 readme입니다.
 
